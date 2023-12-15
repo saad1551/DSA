@@ -1,4 +1,7 @@
 #include <iostream>
+#include <cstdlib>
+#include <algorithm>
+#include <time.h>
 
 using namespace std;
 
@@ -90,11 +93,12 @@ public:
 	}
 };
 
-int main(void) {
+int main() {
+	// initializing the random number generator with the current time seed
     srand(time(0));
 
     // declaring the size of the random arrays
-    const int size = 7;
+    const int size = 100000;
 
     cout << "Testing the algorithms against random arrays of size " << size << endl
          << endl;
@@ -102,23 +106,47 @@ int main(void) {
     // creating a Sorter object
     Sorter sorter;
 
-    // declaring an array
-    int array1[size] = {50, 57, 57, 91, 5, 15, 98};
-    // for (int i = 0; i < size; i++)
-    // {
-    //     array1[i] = rand() % 100;
-    // }
-
-    //printing the original array
-    for (int i = 0; i < size; i++) {
-        cout << array1[i] << " ";
-    }
-
     // implementing Quick Sort
     cout << "Implementing Quick Sort took ";
-
-    // calling the quick sort method of the Sorter and computing the time it takes to sort the array
+    // declaring an array
+    int array1[size];
+    for (int i = 0; i < size; i++)
+    {
+        array1[i] = rand() % 100;
+    }
+     // sorting the array in ascending order for the best case
+    sort(array1, array1 + size);
+    // calling the quick sort method of the Sorter and computing the time it takes to sort the array in the best case
     clock_t startTime = clock();
-	sorter.QuickSort(array1, 0, size - 1);
-    cout << double(clock() - startTime) / CLOCKS_PER_SEC * 1000 << " milliseconds" << endl;
+   	sorter.QuickSort(array1, 0, size - 1);
+    cout << double(clock() - startTime) / CLOCKS_PER_SEC * 1000 << " milliseconds in the best case, ";
+
+    // sorting the array in descending order for the worst case
+    sort(array1, array1 + size, (greater<int>()));
+    // calling the quick sort method of the Sorter and computing the time it takes to sort the array in the worst case
+    startTime = clock();
+    sorter.QuickSort(array1, 0, size - 1);
+    cout << double(clock() - startTime) / CLOCKS_PER_SEC * 1000 << " milliseconds in the worst case" << endl;
+
+	// implementing Counting Sort
+    cout << "Implementing Counting Sort took ";
+    // declaring an array
+    int array2[size];
+    for (int i = 0; i < size; i++)
+    {
+        array2[i] = rand() % 100;
+    }
+     // sorting the array in ascending order for the best case
+    sort(array2, array2 + size);
+    // calling the counting sort method of the Sorter and computing the time it takes to sort the array in the best case
+    startTime = clock();
+   	sorter.CountingSort(array2, size);
+    cout << double(clock() - startTime) / CLOCKS_PER_SEC * 1000 << " milliseconds in the best case, ";
+
+    // sorting the array in descending order for the worst case
+    sort(array1, array1 + size, (greater<int>()));
+    // calling the counting sort method of the Sorter and computing the time it takes to sort the array in the worst case
+    startTime = clock();
+    sorter.CountingSort(array2, size);
+    cout << double(clock() - startTime) / CLOCKS_PER_SEC * 1000 << " milliseconds in the worst case" << endl;
 }

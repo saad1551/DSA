@@ -44,7 +44,43 @@ public:
     void displayResult() {
         cout << this->student_name << " " << "has scored " << this->marks << " in " << course_name << endl;
     }
+    // operator overloading to check compare the two results based on their marks
+    bool operator>(const Result& other) const {
+        return marks > other.marks;
+    }
 };
+
+// Partition function for QuickSort
+int partition(Result arr[], int low, int high) {
+    // take the last element as the pivot
+    Result pivot = arr[high];
+    // iterator to move from the left of the array
+    int i = low - 1;
+
+    // loop through all the elements of the array
+    for (int j = low; j < high; j++) {
+        // if the current element is greater than the pivot, increment the iterator and swap the current element with the element at the iterator
+        if (arr[j] > pivot) { 
+            i++;
+            swap(arr[i], arr[j]);
+        }
+    }
+
+    // move the pivot to its place
+    swap(arr[i + 1], arr[high]);
+    // return the position of the pivot after partitioning
+    return i + 1;
+}
+
+// QuickSort function
+void quickSort(Result arr[], int low, int high) {
+    if (low < high) {
+        int pivotIndex = partition(arr, low, high);
+
+        quickSort(arr, low, pivotIndex - 1);
+        quickSort(arr, pivotIndex + 1, high);
+    }
+}
 
 // function to read the result all the students in an array for a particular subject
 void ReadResult(fstream& file_pointer, Result array[], string course, int marks_column) {
@@ -77,6 +113,47 @@ void ReadResult(fstream& file_pointer, Result array[], string course, int marks_
     }
 }
 
+// Merge function to merge five sorted arrays
+void merge(Result mergedArray[], Result arr1[], int size1, Result arr2[], int size2,
+           Result arr3[], int size3, Result arr4[], int size4, Result arr5[], int size5) {
+    int i = 0, j = 0, k = 0, l = 0, m = 0;
+
+    while (i < size1 && j < size2 && k < size3 && l < size4 && m < size5) {
+        if (arr1[i] > arr2[j] && arr1[i] > arr3[k] && arr1[i] > arr4[l] && arr1[i] > arr5[m]) {
+            mergedArray[i + j + k + l + m] = arr1[i++];
+        } else if (arr2[j] > arr1[i] && arr2[j] > arr3[k] && arr2[j] > arr4[l] && arr2[j] > arr5[m]) {
+            mergedArray[i + j + k + l + m] = arr2[j++];
+        } else if (arr3[k] > arr1[i] && arr3[k] > arr2[j] && arr3[k] > arr4[l] && arr3[k] > arr5[m]) {
+            mergedArray[i + j + k + l + m] = arr3[k++];
+        } else if (arr4[l] > arr1[i] && arr4[l] > arr2[j] && arr4[l] > arr3[k] && arr4[l] > arr5[m]) {
+            mergedArray[i + j + k + l + m] = arr4[l++];
+        } else {
+            mergedArray[i + j + k + l + m] = arr5[m++];
+        }
+    }
+
+    while (i < size1) {
+        mergedArray[i + j + k + l + m] = arr1[i++];
+    }
+
+    while (j < size2) {
+        mergedArray[i + j + k + l + m] = arr2[j++];
+    }
+
+    while (k < size3) {
+        mergedArray[i + j + k + l + m] = arr3[k++];
+    }
+
+    while (l < size4) {
+        mergedArray[i + j + k + l + m] = arr4[l++];
+    }
+
+    while (m < size5) {
+        mergedArray[i + j + k + l + m] = arr5[m++];
+    }
+}
+
+
 int main() {
     // create a file pointer
     fstream CSVFile;
@@ -100,6 +177,28 @@ int main() {
     ReadResult(CSVFile, DSA, "Data Structures and Algorithms", 4);
     ReadResult(CSVFile, IslamicStudies, "Islamic Studies", 5);
     ReadResult(CSVFile, DatabaseSystems, "Database Systems", 6);
+
+
+    // sort all the arrays based on marks using the quick sort algorithm
+    quickSort(CommSkills, 0, 39);
+    quickSort(OOP, 0, 39);
+    quickSort(DSA, 0, 39);
+    quickSort(IslamicStudies, 0, 39);
+    quickSort(DatabaseSystems, 0, 39);
+
+    // Merge the arrays while maintaining descending order based on marks
+    Result mergedArray[200];  // Assuming the total size of all arrays is 200 (40 students * 5 courses)
+    merge(mergedArray, CommSkills, 40, OOP, 40, DSA, 40, IslamicStudies, 40, DatabaseSystems, 40);
+
+
+    quickSort(mergedArray, 0, 199);
+
+
+    for (int i = 0; i < 200; i++) {
+        mergedArray[i].displayResult();
+    }
+
+    return 0;
 }
 
 /* References */
